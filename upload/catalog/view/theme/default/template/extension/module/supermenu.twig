@@ -1,0 +1,352 @@
+{% if mitems %} 
+{% if wrapper_class %}<div class="{{ wrapper_class }}">{% endif %}
+{% if bootstrap_container %}<div class="container">{% endif %}
+<nav id="supermenu" class="{{ skin }} superbig">
+	<a class="mobile-trigger">{{ categ_text }} <span class="mt-bars"><span></span><span></span><span></span></span></a>
+	{% set sep = 0 %} 
+	<ul>
+		{% if tophomelink == 'dark' and skin != "imgmenu" %} 
+			<li class="tlli hometlli"><a href="" class="tll tllhome">&nbsp;</a></li>
+			{% set sep = 1 %}
+		{% elseif tophomelink == 'light' and skin != "imgmenu" %} 
+			<li class="tlli hometlli"><a href="" class="tll tllhomel">&nbsp;</a></li>
+			{% set sep = 1 %}
+		{% endif %} 
+		 
+		{% for mitem in mitems %} 
+			{% if sep and skin != "imgmenu" %}<li class="tlli sep"><span class="item-sep">&nbsp;</span></li>{% endif %}{% set sep = sep + 1 %}
+			<li class="tlli{% if mitem.children %} mkids{% endif %}{% if mitem.cssid == 'login_drop' %} mkids lad{% endif %}{% if mitem.tlstyle %} {{ mitem.tlstyle }}{% endif %}">
+			  {% if mitem.children  or  mitem.cssid  ==  'login_drop'  or (mitem.chtml  and  mitem.chtml  ==  1) %} 
+				<a class="superdropper" href="#"><span>+</span><span>-</span></a>
+			  {% endif %} 
+				<a class="tll" {% if mitem.tlcolor %}style="color: {{ mitem.tlcolor }};"{% endif %} {% if mitem.href and not ((mitem.children  or (mitem.chtml  and  mitem.chtml  ==  1))  and  linkoftopitem  != 'topitem') %} href="{{ mitem.href }}"{% if mitem.tntab %} target="_blank"{% endif %}{% endif %}>{{ mitem.item_topimg ? '<img src="'~mitem.item_topimg~'" alt="'~mitem.name~'" /><br />' : '' }} {{ mitem.name }}</a>
+				{% if mitem.children and (mitem.view == 'f0' or mitem.view == 'f1') %} 
+					<div class="bigdiv withflyout{% if mitem.mfly %} smallflyout{% endif %}{% if mitem.mflyl %} flytoleft{% endif %}" {% if mitem.dwidth %}style="width: {{ mitem.dwidth }}px;"{% endif %}>
+						{% if dropdowntitle %} 
+							<div class="headingoftopitem">
+								{% if mitem.href and linkoftopitem == 'heading' %} 
+									<h2><a href="{{ mitem.href }}"{% if mitem.tntab %} target="_blank"{% endif %}>{{ mitem.name }}</a></h2>
+								{% else %} 
+									<h2>{{ mitem.name }}</h2>
+								{% endif %} 
+							</div>
+						{% endif %} 
+						{% for mildren in mitem.children %} 
+							<div class="withchildfo {% if mildren.gchildren %}hasflyout{% endif %}">
+							  	{% if mildren.gchildren %}<a class="superdropper" href="#"><span>+</span><span>-</span></a>{% endif %} 
+								<a class="theparent" href="{{ mildren.href }}">{{ mildren.name }}</a>
+								{% if mildren.gchildren %} 
+									<div class="flyouttoright">
+										<div class="inflyouttoright" {{ flyout_width ? 'style="width: '~flyout_width~'px"' : '' }}>
+											{% if mitem.view  ==  'f0' %} 
+												{% for gmildren in mildren.gchildren %} 
+													<div class="withchild" {% if mitem.iwidth %}style="width: {{ mitem.iwidth }}px;"{% endif %}>
+														<a class="theparent" href="{{ gmildren.href }}">{{ gmildren.name }}</a>
+														{% if gmildren.ggchildren %} 
+															<span class="mainexpand"></span>
+															<ul class="child-level">
+																{% for ggmildren in gmildren.ggchildren %} 
+																	<li><a href="{{ ggmildren.href }}">{{ ggmildren.name }}</a></li>
+																{% endfor %} 
+															</ul>
+														{% endif %} 
+													</div>
+												{% endfor %} 
+											 {% else %} 
+												{% for gmildren in mildren.gchildren %} 
+													<div class="withimage" {% if mitem.iwidth %}style="width: {{ mitem.iwidth }}px;"{% endif %}>
+														<div class="image">
+															<a href="{{ gmildren.href }}">
+																<img src="{{ gmildren.thumb }}" alt="{{ gmildren.name }}" title="{{ gmildren.name }}" />
+															</a>
+														</div>
+														<div class="name">
+															<a href="{{ gmildren.href }}">{{ gmildren.name }}</a>
+															{% if gmildren.ggchildren %}  
+																<span class="mainexpand"></span>
+																<ul class="child-level">
+																	{% for ggmildren in gmildren.ggchildren %} 
+																		<li><a href="{{ ggmildren.href }}">+ {{ ggmildren.name }}</a></li>
+																	{% endfor %}
+																</ul>
+															{% endif %}  
+														</div>
+														{% if gmildren.price %} 
+															<div class="dropprice">
+																{% if not gmildren.special %} 
+																	{{ gmildren.price }}
+																{% else %} 
+																	<span>{{ gmildren.price }}</span> {{ gmildren.special }}
+																{% endif %} 
+															</div>
+														{% endif %} 
+													</div>
+												{% endfor %}
+											{% endif %}
+										</div>
+									</div>
+								{% endif %} 
+							</div>
+						{% endfor %}
+						{% if mitem.href and linkoftopitem == 'bottom' %} 
+							<div class="linkoftopitem">
+								<a href="{{ mitem.href }}"{% if mitem.tntab %} target="_blank"{% endif %}>{{ viewalltext }} {{ mitem.name }}</a>
+							</div>
+						{% endif %} 
+					</div>
+				{% endif %}
+				{% if (mitem.children or (mitem.chtml and mitem.chtml == 1)) and (mitem.view != 'f0' and mitem.view != 'f1') or mitem.cssid == 'login_drop' %} 
+					<div class="bigdiv {% if mitem.cssid == 'login_drop' and not mitem.dwidth %}withflyout andlogin{% endif %}" {% if mitem.dwidth %}data-width="{{ mitem.dwidth }}" style="width: {{ mitem.dwidth }}px;"{% endif %}>
+						{% if dropdowntitle %} 
+							<div class="headingoftopitem">
+								{% if mitem.href  and  linkoftopitem  ==  'heading' %} 
+									<h2><a href="{{ mitem.href }}"{% if mitem.tntab %} target="_blank"{% endif %}>{{ mitem.name }}</a></h2>
+								{% else %} 
+									<h2>{{ mitem.name }}</h2>
+								{% endif %} 
+							</div>
+						{% endif %} 
+					
+						{% if mitem.add or (mitem.chtml and mitem.chtml == 2) %} 
+							<div class="menu-add" {% if bspace_width %}style="width: {{ bspace_width }}px;"{% endif %}>
+								{% if mitem.chtml and mitem.chtml == 2 %} 
+									{{ mitem.cchtml }}
+								{% else %} 
+									<a {% if mitem.addurl %}href="{{ mitem.addurl }}"{% endif %}><img src="image/{{ mitem.add }}" alt="{{ mitem.name }}" /></a>
+								{% endif %} 
+							</div>
+						{% endif %} 
+						 
+						{% if mitem.fbrands %} 
+							<div class="dropbrands">
+								<span>{{ brands_text }}</span>
+								<ul>
+									{% for dropbrand in mitem.fbrands %} 
+										<li><a href="{{ dropbrand.href }}">{{ dropbrand.name }}</a></li>
+									{% endfor %} 
+								</ul>
+							</div>
+						{% endif %}
+						{% set smlmarg = direction == 'rtl' ? 'left' : 'right' %}
+						<div class="supermenu-left" {% if mitem.add or (mitem.chtml and mitem.chtml == 2) %}{% if mitem.fbrands %}{% if bspace_width %}{% set slmarg =  bspace_width + 180 %}style="margin-{{ smlmarg }}: {{ slmarg }}px"{% else %}style="margin-{{ smlmarg }}: 380px"{% endif %}{% else %}{% if bspace_width %}{% set slmarg = bspace_width + 10 %}style="margin-{{ smlmarg }}: {{ slmarg }}px"{% else %}style="margin-{{ smlmarg }}: 330px"{% endif %}{% endif %}{% elseif mitem.fbrands and not (mitem.add or (mitem.chtml and mitem.chtml == 2)) %} style="margin-{{ smlmarg }}: 170px"{% endif %}>
+
+							{% if mitem.chtml and mitem.chtml == 1 %} {{ mitem.cchtml }}{% endif %} 
+	 
+							{% if mitem.chtml and mitem.chtml == 3 %} <div>{{ mitem.cchtml }}</div>{% endif %} 
+							
+							{% if mitem.cssid == 'login_drop' %} 
+								{% if logged %} 
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ edit }}">{{ text_edit }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ password }}">{{ text_password }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ address }}">{{ text_address }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ wishlist }}">{{ text_wishlist }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ order }}">{{ text_order }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ download }}">{{ text_download }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ return }}">{{ text_return }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ transaction }}">{{ text_transaction }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ newsletter }}">{{ text_newsletter }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ recurring }}">{{ text_recurring }}</a></div>
+									<div class="withchild"{% if mitem.iwidth %} style="width: {{ mitem.iwidth }}px;"{% endif %} ><a class="theparent" href="{{ logout }}">{{ text_logout }}</a></div>
+								{% else %} 
+									<form action="{{ actiond }}" method="post" enctype="multipart/form-data" id="sm-login">
+										<div class="addingaspace" style="clear: none;"></div>
+										{{ entry_email }}<br />
+										<input type="text" name="email" value="" />
+										<br />
+										{{ entry_password }}<br />
+										<input type="password" name="password" value="" />
+										<br />
+										<a href="{{ forgottend }}">{{ text_forgotten }}</a><br />
+										<a href="{{ registerd }}">{{ text_register }}</a><br />
+										<div class="linkoftopitem">
+											<a onclick="$('#sm-login').submit();">{{ button_login }}</a>
+							 			</div>
+									</form>
+								{% endif %} 
+							{% endif %} 
+	  
+							{% if (not mitem.chtml or mitem.chtml == 2 or mitem.chtml == 3) and mitem.cssid != 'login_drop' %} 
+								{% if not mitem.view %} 
+									{% for mildren in mitem.children %} 
+										<div class="withchild {% if mildren.gchildren %}haskids{% endif %}" {% if mitem.iwidth %}style="width: {{ mitem.iwidth }}px;"{% endif %}>
+											<a class="theparent" href="{{ mildren.href }}">{{ mildren.name }}</a>
+											{% if mildren.gchildren %} 
+												<span class="mainexpand"></span>
+												<ul class="child-level">
+													{% for gmildren in mildren.gchildren %} 
+														<li><a href="{{ gmildren.href }}">{{ gmildren.name }}</a></li>
+													{% endfor %}
+												</ul>
+											{% endif %} 
+										</div>
+									{% endfor %} 
+								{% elseif mitem.view  ==  '1' %} 
+									{% for mildren in mitem.children %} 
+										<div class="withimage" {% if mitem.iwidth %}style="width: {{ mitem.iwidth }}px;"{% endif %}>
+											<div class="image">
+												<a href="{{ mildren.href }}"><img src="{{ mildren.thumb }}" alt="{{ mildren.name }}" title="{{ mildren.name }}" /></a>
+											</div>
+											<div class="name">
+												{% if mildren.gchildren %} <span class="mainexpand"></span>{% endif %} 
+												<a class="nname" href="{{ mildren.href }}">{{ mildren.name }}</a>
+												{% if mildren.gchildren %} 
+													<ul class="child-level">
+														{% for gmildren in mildren.gchildren %} 
+															<li><a href="{{ gmildren.href }}">+ {{ gmildren.name }}</a></li>
+														{% endfor %} 
+													</ul>
+												{% endif %}
+											</div>
+											{% if mildren.price %} 
+												<div class="dropprice">
+													{% if not mildren.special %} 
+														{{ mildren.price }}
+													{% else %}   
+														<span>{{ mildren.price }}</span> {{ mildren.special }}
+													{% endif %} 
+												</div>
+											{% endif %}  
+										</div>
+									{% endfor %}
+								{% endif %}
+							{% endif %}
+						</div>
+						{% if mitem.add or (mitem.chtml and mitem.chtml == 2) %} 
+							<div class="menu-add-mobil" {% if mitem.chtml and mitem.chtml == 2 %}style="text-align:left;"{% endif %} >
+								{% if mitem.chtml and mitem.chtml == 2 %} 
+									{{ mitem.cchtml }}
+								{% else %} 
+									<a {% if mitem.addurl %}href="{{ mitem.addurl }}"{% endif %} ><img src="image/{{ mitem.add }}" alt="{{ mitem.name }}" /></a>
+								{% endif %} 
+							</div>
+						{% endif %}
+						 
+						{% if mitem.fbrands %} 
+							<div class="dropbrands dropbrands-mobil">
+								<span>{{ brands_text }}</span>
+								<ul>
+									{% for dropbrand in mitem.fbrands %} 
+										<li><a href="{{ dropbrand.href }}">{{ dropbrand.name }}</a></li>
+									{% endfor %} 
+								</ul>
+							</div>
+						{% endif %}
+						{% if mitem.href  and  linkoftopitem  ==  'bottom'  and  mitem.cssid  !=  'login_drop' %} 
+							<div class="linkoftopitem">
+								<a href="{{ mitem.href }}"{% if mitem.tntab %} target="_blank"{% endif %}>{{ viewalltext }} {{ mitem.name }}</a>
+							</div>
+						{% elseif  mitem.cssid != 'login_drop' %} 
+							<div class="addingaspace"></div>
+						{% endif %} 
+					</div>
+				{% endif %}
+			</li>
+		{% endfor %}
+	</ul>
+</nav>
+{% if bootstrap_container %}</div>{% endif %}
+{% if wrapper_class %}</div>{% endif %}
+<script type="text/javascript"> 
+$(document).ready(function(){ 
+{% if usehoverintent %} 
+	var setari = { 
+		{% if dropdowneffect == 'drop' %} 
+			over: function() { 
+		 		if ($('#supermenu').hasClass('superbig')) {
+					$(this).find('.bigdiv').slideDown('fast'); 
+		 		}		
+			}, 
+			out: function() { 
+		 		if ($('#supermenu').hasClass('superbig')) {
+					$(this).find('.bigdiv').slideUp('fast'); 
+		 		}
+			},
+		{% elseif dropdowneffect == 'show' %} 
+			over: function() { 
+		 		if ($('#supermenu').hasClass('superbig')) {
+					$(this).find('.bigdiv').show(); 
+		 		}
+			}, 
+			out: function() { 
+		 		if ($('#supermenu').hasClass('superbig')) {
+					$(this).find('.bigdiv').hide(); 
+		 		}
+		 	},
+		{% else %} 
+			over: function() { 
+		 		if ($('#supermenu').hasClass('superbig')) {
+					$(this).find('.bigdiv').fadeIn('fast'); 
+		 		}
+			}, 
+			out: function() { 
+		 		if ($('#supermenu').hasClass('superbig')) {
+					$(this).find('.bigdiv').fadeOut('fast'); 
+		 		}
+			},
+		{% endif %} 
+		timeout: 150
+	};
+
+	$("#supermenu ul li.tlli").hoverIntent(setari);
+
+	var setariflyout = { 
+		over: function() { 
+		  	if ($('#supermenu').hasClass('superbig')) {
+				$(this).find('.flyouttoright').show();
+		  	}
+		}, 
+		out: function() { 
+		  	if ($('#supermenu').hasClass('superbig')) {
+				$(this).find('.flyouttoright').hide();
+		  	}
+		},
+		timeout: 350
+	};
+
+	$("#supermenu ul li div.bigdiv.withflyout > .withchildfo").hoverIntent(setariflyout);
+{% else %} 
+	$("#supermenu ul li.tlli").on({
+		mouseenter: function(){
+		  	if ($('#supermenu').hasClass('superbig')) {
+		 		{% if dropdowneffect == 'drop' %} 
+					$(this).find('.bigdiv').slideDown('fast');
+		 		{% elseif dropdowneffect == 'show' %} 
+		 			$(this).find('.bigdiv').show();
+		 		{% else %}   
+		 			$(this).find('.bigdiv').fadeIn('fast');
+		 		{% endif %} 
+		  	}		
+		},
+		mouseleave: function(){
+		  	if ($('#supermenu').hasClass('superbig')) {
+		   		{% if dropdowneffect == 'drop' %} 
+					$(this).find('.bigdiv').slideUp('fast');
+		   		{% elseif dropdowneffect == 'show' %} 
+		 			$(this).find('.bigdiv').hide();
+		 		{% else %}   
+		 			$(this).find('.bigdiv').fadeOut('fast');
+		 		{% endif %} 
+		  	}
+		}
+	});
+	$("#supermenu ul li div.bigdiv.withflyout > .withchildfo").on({
+		mouseenter: function(){
+		  	if ($('#supermenu').hasClass('superbig')) {
+		   		$(this).find('.flyouttoright').show();
+		  	}
+		},
+		mouseleave: function(){
+		  	if ($('#supermenu').hasClass('superbig')) {
+		   		$(this).find('.flyouttoright').hide();
+		  	}
+		}
+	});
+{% endif %}
+});
+var supermenu_width = $('#supermenu').outerWidth(false);
+if (supermenu_width < 768) {
+	$('#supermenu').removeClass('superbig');
+	$('#supermenu').addClass('respsmall');
+}
+</script>
+{% endif %}

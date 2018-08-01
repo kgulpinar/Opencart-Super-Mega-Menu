@@ -1,0 +1,1487 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  	<div class="page-header">
+    	<div class="container-fluid">
+      		<div class="pull-right">
+        		<button type="submit" form="form-supermenu" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        		<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      		</div>
+      		<h1>{{ heading_title }}</h1>
+      		<ul class="breadcrumb">
+        		{% for breadcrumb in breadcrumbs %} 
+        			<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        		{% endfor %} 
+      		</ul>
+    	</div>
+  	</div>
+  	<div class="container-fluid">
+    	{% if error_warning %} 
+    		<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      			<button type="button" class="close" data-dismiss="alert">&times;</button>
+    		</div>
+    	{% endif %} 
+    	{% if success %} 
+    		<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
+      			<button type="button" class="close" data-dismiss="alert">&times;</button>
+    		</div>
+    	{% endif %} 
+    	<div class="panel panel-default">
+
+      		<div class="panel-heading">
+        		<div class="input-group">
+					<span class="input-group-addon" style="min-width: 150px"><i class="fa fa-pencil"></i> {{ text_editfor }}</span>
+					<select class="form-control" onchange="location = this.value;">
+						<option {{ store == 0 ? 'selected="selected"' : '' }} value="{{ module_url }}">Default</option>
+		      			{% for st in stores %} 
+							<option {{ st.store_id == store ? 'selected="selected"' : '' }} value="{{ module_url ~ '&store=' ~ st.store_id }}">{{ st.name }}</option>
+		      			{% endfor %} 
+					</select>
+				</div>
+      		</div>
+
+      		<div class="panel-body">
+        	<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-supermenu" class="form-horizontal">
+
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#tab-items" data-toggle="tab">{{ tab_items }}</a></li>
+					<li><a href="#tab-settings" data-toggle="tab">{{ tab_settings }}</a></li>
+					<li><a href="#tab-html" data-toggle="tab">{{ tab_html }}</a></li>
+            	</ul>
+
+				<div class="tab-content">
+					<div class="tab-pane active in" id="tab-items">
+				  		<div class="table-responsive">
+							<table id="item" class="table table-striped table-bordered table-hover" style="display: none">
+							<thead>
+								<tr>
+									<td class="text-left">{{ entry_type }}</td>
+									<td style="width: 46%;" class="text-left">{{ entry_iset }}</td>
+									<td class="text-left">{{ entry_advanced }}</td>
+									<td></td>
+								</tr>
+							</thead>
+							{% set item_row = 0 %}
+							{% set libg = '#fcfcfc' %}
+							{% for item in items %} 
+								{% set libg = libg  ==  '#fff' ? '#fcfcfc' : '#fff' %}
+								<tbody class="item-row" id="item-row{{ item_row }}">
+									<tr>
+										<td class="text-left" style="background: {{ libg }};">
+											<select style="border: 4px solid {{ item.type  ==  'cat' ? '#C85555' : (item.type  ==  'infol' ? '#7593D9' : (item.type  ==  'infod' ? '#D49ECA' : (item.type  ==  'custom' ? '#F4D98E' : (item.type  ==  'mand' ? '#A0C183' : (item.type  ==  'products' ? '#8F6E96' : (item.type  ==  'catprods' ? '#C5B15F' : (item.type  ==  'login' ? '#9DC58D' : '#80ACAB') ) ) ) ) ) ) }};" class="item-type" id="item-type{{ item_row }}" name="supermenu_item[{{ item_row }}][type]">
+												<option class="ocat" id="ocat{{ item_row }}" value="cat" {% if item.type  ==  'cat' %}selected="selected"{% endif %}>{{ type_cat }}</option>
+												<option class="oinfol" id="oinfol{{ item_row }}" value="infol" {% if item.type  ==  'infol' %}selected="selected"{% endif %}>{{ type_infol }}</option>
+												<option value="infod" {% if item.type  ==  'infod' %}selected="selected"{% endif %}>{{ type_infod }}</option>
+												<option class="ocustom" id="ocustom{{ item_row }}" value="custom" {% if item.type  ==  'custom' %}selected="selected"{% endif %}>{{ type_custom }}</option>
+												<option class="mand" id="mand{{ item_row }}" {% if item.type == 'mand' %}value="mand" selected="selected"{% endif %}>{{ type_mand }}</option>
+												<option class="more" id="more{{ item_row }}" value="more" {% if item.type == 'more' %}selected="selected"{% endif %}>{{ type_more }}</option>
+												<option class="moredoi" id="moredoi{{ item_row }}" {% if item.type == 'more2' %}value="more2" selected="selected"{% endif %}>{{ type_more2 }}</option>
+												<option class="oproducts" id="oproducts{{ item_row }}" value="products" {% if item.type == 'products' %}selected="selected"{% endif %}>{{ type_products }}</option>
+												<option class="catprods" id="catprods{{ item_row }}" value="catprods" {% if item.type == 'catprods' %}selected="selected"{% endif %}>{{ type_catprods }}</option>
+												<option class="catcatprods" id="catcatprods{{ item_row }}" value="catcatprods" {% if item.type == 'catcatprods' %}selected="selected"{% endif %}>{{ type_catcatprods }}</option>
+												<option class="login" id="login{{ item_row }}" value="login" {% if item.type == 'login' %}selected="selected"{% endif %}>{{ type_login }}</option>
+											</select>
+											<div class="viewsel viewsel{{ item_row }}"><b>{{ text_sview }} </b>
+												<select name="supermenu_item[{{ item_row }}][view]" class="form-control">
+													<option value="0" {% if not item.view %}selected="selected"{% endif %}>{{ text_slist }}</option>
+													<option value="1" {% if item.view  ==  '1' %}selected="selected"{% endif %}>{{ text_sgrid }}</option>
+													<option value="f0" {% if item.view  ==  'f0' %}selected="selected"{% endif %}>{{ text_dflist }}</option>
+													<option value="f1" {% if item.view  ==  'f1' %}selected="selected"{% endif %}>{{ text_dfgrid }}</option>
+												</select>
+											</div>
+										</td>
+										<td class="text-left" style="background: {{ libg }};">
+											<div style="position: relative">
+												<div class="sorder">
+														{{ text_sorder }}
+														<input size="2" type="text" name="supermenu_item[{{ item_row }}][sorder]" value="{{ item.sorder ? item.sorder : '' }}" />
+												</div>
+
+												<div id="cat-type{{ item_row }}" class="typediv cat-type">
+													<h3 class="superh3">{{ entry_category }}</h3>
+
+                  									<input type="hidden" name="supermenu_item[{{ item_row }}][category_id]" value="{{ categories[item.category_id]['name'] ? item.category_id : 0 }}" />
+													<input type="text" value="{{ categories[item.category_id]['name'] }}" placeholder="{{ entry_category }}" class="form-control category-autocomplete" />
+
+												</div>
+		 
+												<div id="info-type{{ item_row }}" class="typediv info-type">
+														<h3 class="superh3">{{ entry_information }}</h3>
+														<select class="form-control" name="supermenu_item[{{ item_row }}][information_id]">
+															{% for information in informations %}
+																{% if information.information_id  ==  item.information_id %} 
+																	<option value="{{ information.information_id }}" selected="selected">{{ information.name }}</option>
+																{% else %}   
+																	<option value="{{ information.information_id }}">{{ information.name }}</option>
+																{% endif %} 
+															{% endfor %} 
+														</select>
+												</div>
+		   
+												<div id="oproducts-type{{ item_row }}" class="typediv oproducts-type">
+														<h3 class="superh3">{{ text_whatproducts }}</h3>
+
+														<div class="btn-group selectbuts">
+        													<button type="button" class="btn {{ item.products ==  'latest' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="latest" title="">{{ text_productlatest }}</button>
+        													<button type="button" class="btn {{ item.products ==  'special' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="special" title="">{{ text_productspecial }}</button>
+        													<button type="button" class="btn {{ item.products ==  'featured' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="featured" title="">{{ text_productfeatured }}</button>
+        													<button type="button" class="btn {{ item.products ==  'bestseller' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="bestseller" title="">{{ text_productbestseller }}</button>
+      													</div>
+      													<input type="hidden" name="supermenu_item[{{ item_row }}][products]" value="{{ item.products }}" />
+
+												</div>	
+
+												<div id="productlimit-type{{ item_row }}" class="typediv productlimit-type">
+													<br />
+													<div class="input-group long">
+														<span class="input-group-addon long">{{ text_productlimit }}</span>
+														<input size="1" class="form-control" type="text" name="supermenu_item[{{ item_row }}][productlimit]" value="{{ item.productlimit ? item.productlimit : '5' }}" />
+													</div>
+												</div>
+												
+												<div id="custom-type{{ item_row }}" class="typediv custom-type">
+													<h3 class="superh3">{{ entry_custom }}</h3>
+													{% for language in languages %} 
+														<div class="input-group long">
+															<span class="input-group-addon long"><img class="inline-img" src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ custom_name }}</span>
+															<input class="form-control" type="text" name="supermenu_item[{{ item_row }}][customname][{{ language.language_id }}]" value="{{ item.customname[language.language_id] }}" />
+														</div>
+														<br />
+														<div class="input-group long">
+															<span class="input-group-addon long"><img class="inline-img" src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ custom_url }}</span>
+															<input class="form-control" type="text" name="supermenu_item[{{ item_row }}][customurl][{{ language.language_id }}]" value="{{ item.customurl[language.language_id] }}" />
+														</div>
+													{% endfor %} 
+												</div>
+		  
+												<h3 class="addsuperh3" id="hideadd-type{{ item_row }}">{{ entry_add }}</h3>
+												<div id="add-type{{ item_row }}" class="addtypediv">
+													{% for language in languages %} 
+														<div class="addTypeInner">
+															<div class="input-group">
+																<span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+																<input class="form-control" type="text" name="supermenu_item[{{ item_row }}][addurl][{{ language.language_id }}]" value="{{ item.addurl[language.language_id] }}" placeholder="Banner Link URL" />
+															</div>
+															<div class="input-group">
+																<span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+																<a href="" id="thumb-image_{{ item_row }}{{ language.language_id }}" data-toggle="image" class="img-thumbnail">
+																	<img style="max-width: 200px" src="{{ item.image[language.language_id]|length > 3 ? (http_catalog_url ~ 'image/' ~ item.image[language.language_id]) : no_image }}" alt="" title="" data-placeholder="{{ no_image }}" />
+																</a>
+																<input type="hidden" name="supermenu_item[{{ item_row }}][image][{{ language.language_id }}]" value="{{ item.image[language.language_id] }}" id="input-image_{{ item_row }}{{ language.language_id }}" />
+															</div>
+														</div>
+         											{% endfor %}
+												</div>
+											</div>
+										</td>
+										<td class="text-left" style="background: {{ libg }};">
+											<div class="advm{{ item_row }} advs">
+												<a class="expand btn btn-info"><i class="fa fa-arrows-alt" aria-hidden="true"></i> {{ text_expando }}</a>
+												<div class="advh">
+													<a class="closeadvm"><strong><span><span><i class="fa fa-times" area-hidden="true"></i></span></span></strong></a>
+													<table class="smenua">
+														<tr>
+															<td>{{ text_tlcolor }}</td>
+															<td><input type="text" name="supermenu_item[{{ item_row }}][tlcolor]" class="sm-colors form-control" value="{{ item.tlcolor }}" size="7" /></td>
+															<td>{{ text_tlstyle }}</td>
+															<td><input type="text" name="supermenu_item[{{ item_row }}][tlstyle]" value="{{ item.tlstyle }}" size="28" class="form-control" /></td>
+														</tr>
+														<tr>
+															<td>{{ text_chtml }}</td>
+															<td>
+																<select name="supermenu_item[{{ item_row }}][chtml]" class="form-control">
+																	<option value="0" {% if not item.chtml %}selected="selected"{% endif %}>{{ text_no }}</option>
+																	<option value="1" {% if  item.chtml  ==  1 %}selected="selected"{% endif %}>{{ text_alldrop }}</option>
+																	<option value="2" {% if  item.chtml  ==  2 %}selected="selected"{% endif %}>{{ text_justadd }}</option>
+																	<option value="3" {% if  item.chtml  ==  3 %}selected="selected"{% endif %}>{{ text_overdrop }}</option>
+																</select>	
+																<select name="supermenu_item[{{ item_row }}][cchtml]" class="form-control">
+																	<option value="area1" {% if item.cchtml  ==  'area1' %}selected="selected"{% endif %}>Area 1</option>
+																	<option value="area2" {% if item.cchtml  ==  'area2' %}selected="selected"{% endif %}>Area 2</option>
+																	<option value="area3" {% if item.cchtml  ==  'area3' %}selected="selected"{% endif %}>Area 3</option>
+																	<option value="area4" {% if item.cchtml  ==  'area4' %}selected="selected"{% endif %}>Area 4</option>
+																	<option value="area5" {% if item.cchtml  ==  'area5' %}selected="selected"{% endif %}>Area 5</option>
+																	<option value="area6" {% if item.cchtml  ==  'area6' %}selected="selected"{% endif %}>Area 6</option>
+																	<option value="area7" {% if item.cchtml  ==  'area7' %}selected="selected"{% endif %}>Area 7</option>
+																	<option value="area8" {% if item.cchtml  ==  'area8' %}selected="selected"{% endif %}>Area 8</option>
+																	<option value="area9" {% if item.cchtml  ==  'area9' %}selected="selected"{% endif %}>Area 9</option>
+																	<option value="area10" {% if item.cchtml  ==  'area10' %}selected="selected"{% endif %}>Area 10</option>
+																</select>
+															</td>
+															<td>{{ text_subcatdisplay }}</td>
+															<td>
+																<select name="supermenu_item[{{ item_row }}][subcatdisplay]" class="form-control">
+																	<option value="all" {% if item.subcatdisplay  ==  'all' %}selected="selected"{% endif %}>{{ text_subcatdisplay_all }}</option>
+																	<option value="level1" {% if item.subcatdisplay  ==  'level1' %}selected="selected"{% endif %}>{{ text_subcatdisplay_level1 }}</option>
+																	<option value="none" {% if item.subcatdisplay  ==  'none' %}selected="selected"{% endif %}>{{ text_subcatdisplay_none }}</option>
+																</select>
+															</td>
+														</tr>
+														<tr>
+															<td>{{ text_dwidth }}</td>
+															<td><input size="3" type="text" name="supermenu_item[{{ item_row }}][dwidth]" value="{{ item.dwidth }}" class="form-control" /></td>
+															<td> {{ text_iwidth }}</td>
+															<td><input size="3" type="text" name="supermenu_item[{{ item_row }}][iwidth]" value="{{ item.iwidth }}" class="form-control" /></td>
+														</tr>
+														<tr>
+															<td>{{ text_fbrands }}</td>
+															<td colspan="3"><input size="48" type="text" name="supermenu_item[{{ item_row }}][fbrands]" value="{{ item.fbrands }}" class="form-control" /></td>
+														</tr>
+														<tr>
+															<td>{{ text_linknewtab }} <input type="checkbox" name="supermenu_item[{{ item_row }}][tntab]" value="1" {{ item.tntab ? 'checked="checked"' : '' }} /></td>
+															<td colspan="2">{{ text_mini_flyout }} <input type="checkbox" name="supermenu_item[{{ item_row }}][mfly]" value="1" {{ item.mfly ? 'checked="checked"' : '' }} /></td>
+															<td>{{ text_flyout_left }} <input type="checkbox" name="supermenu_item[{{ item_row }}][mflyl]" value="1" {{ item.mflyl ? 'checked="checked"' : '' }} /></td>
+														</tr>
+													</table>
+												</div>
+											</div>
+										</td>
+										<td class="text-left" style="background: {{ libg }};">
+											<button type="button" onclick="$('#item-row{{ item_row }}').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+										</td>
+									</tr>
+								</tbody>
+								{% set item_row = item_row + 1 %} 
+							{% endfor %}
+							<tfoot>
+								<tr>
+									<td colspan="3"></td>
+									<td class="text-left">
+										<button type="button" onclick="additem();" data-toggle="tooltip" title="{{ button_add_item }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+				  	</div>
+				</div>
+				<div class="tab-pane" id="tab-settings">
+					<div class="row">
+						<div class="col-sm-5 col-xs-12" >
+							<h2 class="h2settings">{{ text_general }}</h2>
+							<div class="settings-row">
+								<div class="lefter">Menu Status</div>
+								<div class="btn-group selectbuts">
+        							<button type="button" class="btn {{ supermenu_showstatus ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="1" title="">{{ text_disabled }}</button>
+        							<button type="button" class="btn {{ not supermenu_showstatus ? 'btn-success' : 'btn-default' }}" data-toggle="tooltip" data-value="0" title="">{{ text_enabled }}</button>
+      							</div>
+      							<input type="hidden" name="supermenu_showstatus" value="{{ supermenu_showstatus }}" />  
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_dropdowntitle }}</div>
+								<div class="btn-group selectbuts">
+        							<button type="button" class="btn {{ supermenu_dropdowntitle ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="1" title="">{{ text_yes }}</button>
+        							<button type="button" class="btn {{ not supermenu_dropdowntitle ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="0" title="">{{ text_no }}</button>
+      							</div>
+      							<input type="hidden" name="supermenu_dropdowntitle" value="{{ supermenu_dropdowntitle }}" />  	  
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_menuskin }}</div>
+								<div class="btn-group selectbuts">
+        							<button type="button" class="btn {{ supermenu_skin ==  'default' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="default" title="">Default</button>
+        							<button type="button" class="btn {{ supermenu_skin ==  'white' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="white" title="">White</button>
+        							<button type="button" class="btn {{ supermenu_skin ==  'alt1' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="alt1" title="">Alternative 1</button>
+        							<button type="button" class="btn {{ supermenu_skin ==  'alt2' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="alt2" title="">Alternative 2</button>
+        							<button type="button" class="btn {{ supermenu_skin ==  'imgmenu' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="imgmenu" title="">Image Menu</button>
+      							</div>
+      							<input type="hidden" name="supermenu_skin" value="{{ supermenu_skin }}" />	  
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_topitemlink }}</div>
+								<div class="btn-group-vertical selectbuts">
+        							<button type="button" class="btn {{ supermenu_topitemlink ==  'bottom' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="bottom" title="">-View all- button in bottom of dropdown</button>
+        							<button type="button" class="btn {{ supermenu_topitemlink ==  'topitem' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="topitem" title="">Top item has link</button>
+        							<button type="button" class="btn {{ supermenu_topitemlink ==  'heading' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="heading" title="">The dropdown title has link</button>
+      							</div>
+      							<input type="hidden" name="supermenu_topitemlink" value="{{ supermenu_topitemlink }}" />  	  
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_tophomelink }}</div>
+								<div class="btn-group selectbuts">
+        							<button type="button" class="btn {{ supermenu_tophomelink ==  'none' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="none" title="">No</button>
+        							<button type="button" class="btn {{ supermenu_tophomelink ==  'light' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="light" title="">Yes - light icon</button>
+        							<button type="button" class="btn {{ supermenu_tophomelink ==  'dark' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="dark" title="">Yes - dark icon</button>
+      							</div>
+      							<input type="hidden" name="supermenu_tophomelink" value="{{ supermenu_tophomelink }}" />  	  
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_supercache }}</div>
+								<div class="btn-group selectbuts">
+        							<button type="button" class="btn {{ supermenu_cache ? 'btn-success' : 'btn-default' }}" data-toggle="tooltip" data-value="1" title="">{{ text_enabled }}</button>
+        							<button type="button" class="btn {{ not supermenu_cache ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="0" title="">{{ text_disabled }}</button>
+      							</div>
+      							<input type="hidden" name="supermenu_cache" value="{{ supermenu_cache }}" />
+							</div>
+							<div class="settings-row" style="display: none;">
+								<div class="lefter">{{ text_settings_flyoutwidth }}</div>
+								<div class="input-group">
+									<input type="text" name="supermenu_flyout_width" value="{{ supermenu_flyout_width }}" class="form-control" size="3" />
+									<span class="input-group-addon">px</span>
+								</div>
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_bspacewidth }}</div>
+								<input type="text" name="supermenu_bannerspace_width" class="form-control small" value="{{ supermenu_bannerspace_width }}" size="3" /> px
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ text_3dlevellimit }}</div>
+								<input type="text" name="supermenu_3dlevellimit" value="{{ supermenu_3dlevellimit }}" size="3" class="form-control small" />
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ entry_image_size }} </div>
+								<input type="text" name="supermenu_image_width" value="{{ supermenu_image_width }}" class="form-control small" size="3" />px 
+								<input type="text" name="supermenu_image_height" value="{{ supermenu_image_height }}" class="form-control small" size="3" />px
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_dropeffect }}</div>
+								<div class="btn-group selectbuts">
+        							<button type="button" class="btn {{ supermenu_dropdowneffect ==  'drop' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="drop" title="">Slide down</button>
+        							<button type="button" class="btn {{ supermenu_dropdowneffect ==  'fade' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="fade" title="">Fade In</button>
+        							<button type="button" class="btn {{ supermenu_dropdowneffect ==  'show' ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="show" title="">Just show</button>
+      							</div>
+      							<input type="hidden" name="supermenu_dropdowneffect" value="{{ supermenu_dropdowneffect }}" /> 	  
+							</div>
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_hoverintent }}</div>
+								<div class="btn-group selectbuts">
+        							<button type="button" class="btn {{ supermenu_usehoverintent ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="1" title="">{{ text_no }}</button>
+        							<button type="button" class="btn {{ not supermenu_usehoverintent ? 'btn-success' : 'btn-default' }}" data-toggle="tooltip" data-value="0" title="">{{ text_yes }}</button>
+      							</div>
+      							<input type="hidden" name="supermenu_usehoverintent" value="{{ supermenu_usehoverintent }}" /> 	  	  
+							</div>
+
+
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_scontainer }}</div>
+								<div class="btn-group selectbuts">
+        							<button type="button" class="btn {{ supermenu_container ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="1" title="">{{ text_no }}</button>
+        							<button type="button" class="btn {{ not supermenu_container ? 'btn-success' : 'btn-default' }}" data-toggle="tooltip" data-value="0" title="">{{ text_yes }}</button>
+      							</div>
+      							<input type="hidden" name="supermenu_container" value="{{ supermenu_container }}" />
+							</div>
+
+							<div class="settings-row">
+								<div class="lefter">{{ text_settings_wrapclass }}</div>
+								<input type="text" name="supermenu_wrapper_class" value="{{ supermenu_wrapper_class }}" size="3" class="form-control medium" />
+							</div>
+
+							<h2 class="h2settings">{{ text_languagerelated }}</h2>
+
+							<div class="settings-row">
+								{{ more_name }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_more_title[{{ language.language_id }}]" value="{{ supermenu_more_title[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ more2_name }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_more2_title[{{ language.language_id }}]" value="{{ supermenu_more2_title[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ text_settings_mobilemenuname }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_mobilemenuname[{{ language.language_id }}]" value="{{ supermenu_mobilemenuname[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ text_settings_infodname }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_infodname[{{ language.language_id }}]" value="{{ supermenu_infodname[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ text_settings_brandsdname }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_brandsdname[{{ language.language_id }}]" value="{{ supermenu_brandsdname[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ text_settings_latestpname }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_latestpname[{{ language.language_id }}]" value="{{ supermenu_latestpname[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ text_settings_specialpname }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_specialpname[{{ language.language_id }}]" value="{{ supermenu_specialpname[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ text_settings_featuredpname }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_featuredpname[{{ language.language_id }}]" value="{{ supermenu_featuredpname[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ text_settings_bestpname }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_bestpname[{{ language.language_id }}]" value="{{ supermenu_bestpname[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ text_settings_viewmorename }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_viewmorename[{{ language.language_id }}]" value="{{ supermenu_viewmorename[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+
+							<div class="settings-row">
+								{{ text_settings_viewallname }}
+								{% for language in languages %}
+									<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>
+  										<input class="form-control" type="text" name="supermenu_viewallname[{{ language.language_id }}]" value="{{ supermenu_viewallname[language.language_id] }}" />
+									</div>
+								{% endfor %}
+							</div>
+							
+							<h2 class="h2settings">{{ text_settings_fproduct }}</h2>
+
+		  					<div class="form-group">
+            					<label class="col-sm-2 control-label" for="input-product">Products</label>
+            					<div class="col-sm-10">
+              						<input type="text" name="product" value="" placeholder="Type product name" id="input-product" class="form-control" />
+              						<div id="featured-product" class="well well-sm" style="height: 150px; overflow: auto;">
+                						{% for product in products %} 
+                							<div id="featured-product{{ product.product_id }}"><i class="fa fa-minus-circle"></i> {{ product.name }}
+                  								<input type="hidden" name="supermenu_fproduct[]" value="{{ product.product_id }}" />
+                							</div>
+                						{% endfor %} 
+              						</div>
+            					</div>
+          					</div>
+
+						</div>
+
+						<div class="col-sm-7 col-xs-12">
+
+							<div class="row">
+								<div class="col-sm-6 col-xs-12" >
+									<h3 class="h3settings">{{ text_more_dropdown }}</h3>
+
+									<div class="form-group">
+            							<label class="col-sm-2 control-label" for="input-featcat">Category</label>
+            							<div class="col-sm-10">
+              								<input type="text" name="featcat" value="" placeholder="Type category name" id="input-featcat" class="form-control" />
+              								<div id="featured-featcat" class="well well-sm" style="height: 250px; overflow: auto;">
+                								{% for featcat in featcats %} 
+                									<div id="featured-featcat{{ featcat.category_id }}"><i class="fa fa-minus-circle"></i> {{ featcat.name }}
+                  										<input type="hidden" name="supermenu_more[]" value="{{ featcat.category_id }}" />
+                									</div>
+                								{% endfor %} 
+              								</div>
+            							</div>
+          							</div>
+
+								</div>
+								<div class="col-sm-6 col-xs-12" >
+									<h3 class="h3settings">{{ text_more2_dropdown }}</h3>
+
+									<div class="form-group">
+            							<label class="col-sm-2 control-label" for="input-feat2cat">Category</label>
+            							<div class="col-sm-10">
+              								<input type="text" name="feat2cat" value="" placeholder="Type category name" id="input-feat2cat" class="form-control" />
+              								<div id="featured-feat2cat" class="well well-sm" style="height: 250px; overflow: auto;">
+                								{% for feat2cat in feat2cats %} 
+                									<div id="featured-feat2cat{{ feat2cat.category_id }}"><i class="fa fa-minus-circle"></i> {{ feat2cat.name }}
+                  										<input type="hidden" name="supermenu_more2[]" value="{{ feat2cat.category_id }}" />
+                									</div>
+                								{% endfor %} 
+              								</div>
+            							</div>
+          							</div>
+
+								</div>
+							</div>
+							<br/>
+
+							<h2 class="h2settings">{{ text_customization }}</h2>
+
+							<div class="settings-row">
+								<b>Apply the customization settings from below? </b> &nbsp;
+								<div class="btn-group selectbuts">
+        							<button type="button" class="btn {{ not supermenu_settings_status ? 'btn-info' : 'btn-default' }}" data-toggle="tooltip" data-value="0" title="">{{ text_no }}</button>
+        							<button type="button" class="btn {{ supermenu_settings_status ? 'btn-success' : 'btn-default' }}" data-toggle="tooltip" data-value="1" title="">{{ text_yes }}</button>
+      							</div>
+      							<input type="hidden" name="supermenu_settings_status" value="{{ supermenu_settings_status }}" /> 	
+	    					</div>
+
+							<div class="settings-row">
+								Supermenu font family: <span style="color: #06f; font-weight: normal; font-size: 11px;">( if you want to use another font in supermenu put it in here )</span>
+								<input type="text" name="supermenu_settings[fontf]" value="{{ settings.fontf }}" class="form-control" /> 
+							</div>
+
+							<div class="settings-row">
+								Supermenu top items font size: 
+								<select name="supermenu_settings[topfont]" class="form-control">
+			      					{% if settings.topfont %} 
+                  						<option value="{{ settings.topfont }}" selected="selected">{{ settings.topfont }}</option>
+                  					{% endif %} 
+				  					<option value="13px">13px</option>
+                  					<option value="12px">12px</option>
+                  					<option value="14px">14px</option>
+                  					<option value="15px">15px</option>
+                  					<option value="16px">16px</option>
+                  					<option value="18px">18px</option>
+		 						</select>	
+							</div>
+
+							<div class="settings-row">
+								Supermenu dropdown items font size: 
+								<select name="supermenu_settings[dropfont]" class="form-control">
+			      					{% if settings.dropfont %} 
+                  						<option value="{{ settings.dropfont }}" selected="selected">{{ settings.dropfont }}</option>
+                  					{% endif %} 
+				  					<option value="12px">12px</option>
+                  					<option value="13px">13px</option>
+                  					<option value="14px">14px</option>
+                  					<option value="15px">15px</option>
+                  					<option value="16px">16px</option>
+                  					<option value="18px">18px</option>
+		 						</select>	
+							</div>
+
+							<div class="settings-row">
+		 						Top menu background gradient:
+		 						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[bg]" class="sm-colors form-control" value="{{ settings.bg }}" /></div>
+		 							<div class="col-sm-2">to</div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[bg2]" class="sm-colors form-control" value="{{ settings.bg2 }}" /></div>
+		 						</div>
+	    					</div>
+
+							<div class="settings-row">
+		 						Top menu border:
+		 						<div class="row">
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[tmborderpx]" class="form-control">
+			      					{% if settings.tmborderpx %} 
+                  						<option value="{{ settings.tmborderpx }}" selected="selected">{{ settings.tmborderpx }}</option>
+                  					{% endif %} 
+				  					<option value="default">default</option>
+                  					<option value="1px">1px</option>
+                  					<option value="2px">2px</option>
+                  					<option value="3px">3px</option>
+                  					<option value="4px">4px</option>
+                  					<option value="5px">5px</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[tmbordero]" class="form-control">
+			      					{% if settings.tmbordero %} 
+                  						<option value="{{ settings.tmbordero }}" selected="selected">{{ settings.tmbordero }}</option>
+                  					{% endif %} 
+                  					<option value="all-around">all-around</option>
+                  					<option value="top">top</option>
+                  					<option value="left">left</option>
+                  					<option value="right">right</option>
+                  					<option value="bottom">bottom</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+         						<select name="supermenu_settings[tmborders]" class="form-control">
+			      					{% if settings.tmborders %} 
+                  						<option value="{{ settings.tmborders }}" selected="selected">{{ settings.tmborders }}</option>
+                  					{% endif %} 
+                  					<option value="solid">solid</option>
+                 					<option value="dotted">dotted</option>
+                  					<option value="dashed">dashed</option>
+								</select>	
+								</div>
+								<div class="col-sm-3">	
+		 						<input type="text" name="supermenu_settings[tmborderc]" class="sm-colors form-control" value="{{ settings.tmborderc }}" size="7" />
+		 						</div>
+		 						</div>
+	    					</div>
+							<div class="settings-row">
+	     						Top menu item color:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[tlc]" class="sm-colors form-control" value="{{ settings.tlc }}" /></div>
+		 							<div class="col-sm-2">>> hover >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[tlch]" class="sm-colors form-control" value="{{ settings.tlch }}" /></div>
+		 						</div>
+							</div> 
+							<div class="settings-row">
+	     						Top menu item text shadow color:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[tlcts]" class="sm-colors form-control" value="{{ settings.tlcts }}" /></div>
+		 							<div class="col-sm-2">>> hover >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[tlchts]" class="sm-colors form-control" value="{{ settings.tlchts }}" /></div>
+		 						</div>
+							</div> 
+							<div class="settings-row">
+	     						Top menu item background on hover:
+	     						<input type="text" name="supermenu_settings[tlb]" class="sm-colors form-control" value="{{ settings.tlb }}" size="7" />
+							</div> 
+	    					<div class="settings-row">
+		 						Dropdown background:
+	     						<input type="text" name="supermenu_settings[dbg]" class="sm-colors form-control" value="{{ settings.dbg }}" size="7" />
+							</div>
+	    					<div class="settings-row">
+		 						Flyout background:
+	     						<input type="text" name="supermenu_settings[fybg]" class="sm-colors form-control" value="{{ settings.fybg }}" size="7" />
+							</div>
+							<div class="settings-row">
+		 						Dropdown  border:
+		 						<div class="row">
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[slborderpx]" class="form-control">
+			      					{% if settings.slborderpx %} 
+                  						<option value="{{ settings.slborderpx }}" selected="selected">{{ settings.slborderpx }}</option>
+                  					{% endif %} 
+				  					<option value="default">default</option>
+                  					<option value="1px">1px</option>
+                  					<option value="2px">2px</option>
+                  					<option value="3px">3px</option>
+                  					<option value="4px">4px</option>
+                  					<option value="5px">5px</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[slbordero]" class="form-control">
+			      					{% if settings.slbordero %} 
+                  						<option value="{{ settings.slbordero }}" selected="selected">{{ settings.slbordero }}</option>
+                  					{% endif %} 
+                  					<option value="all-around">all-around</option>
+                  					<option value="top">top</option>
+                  					<option value="left">left</option>
+                  					<option value="right">right</option>
+                  					<option value="bottom">bottom</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+         						<select name="supermenu_settings[slborders]" class="form-control">
+			      					{% if settings.slborders %} 
+                  						<option value="{{ settings.slborders }}" selected="selected">{{ settings.slborders }}</option>
+                  					{% endif %} 
+                  					<option value="solid">solid</option>
+                  					<option value="dotted">dotted</option>
+                  					<option value="dashed">dashed</option>
+								</select>	
+		 						</div>
+		 						<div class="col-sm-3">	
+		 						<input type="text" name="supermenu_settings[slborderc]" class="sm-colors form-control" value="{{ settings.slborderc }}" size="7" />
+		 						</div>
+		 						</div>
+	    					</div>
+	    					<div class="settings-row">
+		 						Dropdown first level item color:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[dic]" class="sm-colors form-control" value="{{ settings.dic }}" /></div>
+		 							<div class="col-sm-2">>> hover >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[dich]" class="sm-colors form-control" value="{{ settings.dich }}" /></div>
+		 						</div>
+							</div>
+	    					<div class="settings-row">
+		 						Dropdown first level item background color:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[dib]" class="sm-colors form-control" value="{{ settings.dib }}" /></div>
+		 							<div class="col-sm-2">>> hover >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[dibh]" class="sm-colors form-control" value="{{ settings.dibh }}" /></div>
+		 						</div>
+							</div>
+							<div class="settings-row">
+		 						Dropdown first level item border:
+		 						<div class="row">
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[diborderpx]" class="form-control">
+			      					{% if settings.diborderpx %} 
+                  						<option value="{{ settings.diborderpx }}" selected="selected">{{ settings.diborderpx }}</option>
+                  					{% endif %} 
+				  					<option value="default">default</option>
+                  					<option value="1px">1px</option>
+                  					<option value="2px">2px</option>
+                  					<option value="3px">3px</option>
+                  					<option value="4px">4px</option>
+                  					<option value="5px">5px</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[dibordero]" class="form-control">
+			      					{% if settings.dibordero %} 
+                  						<option value="{{ settings.dibordero }}" selected="selected">{{ settings.dibordero }}</option>
+                  					{% endif %} 
+                  					<option value="all-around">all-around</option>
+                  					<option value="top">top</option>
+                  					<option value="left">left</option>
+                  					<option value="right">right</option>
+                  					<option value="bottom">bottom</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+         						<select name="supermenu_settings[diborders]" class="form-control">
+			      					{% if settings.diborders %} 
+                  						<option value="{{ settings.diborders }}" selected="selected">{{ settings.diborders }}</option>
+                  					{% endif %} 
+                  					<option value="solid">solid</option>
+                  					<option value="dotted">dotted</option>
+                  					<option value="dashed">dashed</option>
+								</select>	
+		 						</div>
+		 						<div class="col-sm-3">	
+		 						<input type="text" name="supermenu_settings[diborderc]" class="sm-colors form-control" value="{{ settings.diborderc }}" size="7" />
+		 						</div>
+		 						</div>
+	    					</div>
+	    					<div class="settings-row">
+	     						Dropdown - second level item color:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[slc]" class="sm-colors form-control" value="{{ settings.slc }}" /></div>
+		 							<div class="col-sm-2">>> hover >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[slch]" class="sm-colors form-control" value="{{ settings.slch }}" /></div>
+		 						</div>
+							</div> 
+	    					<div class="settings-row">
+	     						Dropdown - second level item background color:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[slb]" class="sm-colors form-control" value="{{ settings.slb }}" /></div>
+		 							<div class="col-sm-2">>> hover >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[slbh]" class="sm-colors form-control" value="{{ settings.slbh }}" /></div>
+		 						</div>
+							</div>  
+	    					<div class="settings-row">
+	     						Dropdown with Flyout - Item color:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[flyic]" class="sm-colors form-control" value="{{ settings.flyic }}" /></div>
+		 							<div class="col-sm-2">>> hover >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[flyich]" class="sm-colors form-control" value="{{ settings.flyich }}" /></div>
+		 						</div>
+							</div>
+	    					<div class="settings-row">
+	     						Dropdown with Flyout - Item border:
+		 						<div class="row">
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[flyiborderpx]" class="form-control">
+			      					{% if settings.flyiborderpx %} 
+                  						<option value="{{ settings.flyiborderpx }}" selected="selected">{{ settings.flyiborderpx }}</option>
+                  					{% endif %} 
+				  					<option value="default">default</option>
+                  					<option value="1px">1px</option>
+                  					<option value="2px">2px</option>
+                  					<option value="3px">3px</option>
+                  					<option value="4px">4px</option>
+                  					<option value="5px">5px</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[flyibordero]" class="form-control">
+			      					{% if settings.flyibordero %} 
+                  						<option value="{{ settings.flyibordero }}" selected="selected">{{ settings.flyibordero }}</option>
+                  					{% endif %} 
+                  					<option value="all-around">all-around</option>
+                  					<option value="top">top</option>
+                  					<option value="left">left</option>
+                  					<option value="right">right</option>
+                  					<option value="bottom">bottom</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+         						<select name="supermenu_settings[flyiborders]" class="form-control">
+			      					{% if settings.flyiborders %} 
+                  						<option value="{{ settings.flyiborders }}" selected="selected">{{ settings.flyiborders }}</option>
+                  					{% endif %} 
+                  					<option value="solid">solid</option>
+                  					<option value="dotted">dotted</option>
+                  					<option value="dashed">dashed</option>
+								</select>	
+		 						</div>
+		 						<div class="col-sm-3">	
+		 						<input type="text" name="supermenu_settings[flyiborderc]" class="sm-colors form-control" value="{{ settings.flyiborderc }}" size="7" />
+		 						</div>
+		 						</div>
+	    					</div>
+							<div class="settings-row">
+	      						Dropdown with Flyout - Item background on hover:
+	     						<input type="text" name="supermenu_settings[flyib]" class="sm-colors form-control" value="{{ settings.flyib }}" size="7" />
+							</div> 
+							<div class="settings-row">
+	    						  Dropdown title color (if title is displayed):
+	    						 <input type="text" name="supermenu_settings[drtc]" class="sm-colors form-control" value="{{ settings.drtc }}" size="7" />
+							</div> 
+							<div class="settings-row">
+	     						Dropdown title border:
+		 						<div class="row">
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[drtborderpx]" class="form-control">
+			      					{% if settings.drtborderpx %} 
+                  						<option value="{{ settings.drtborderpx }}" selected="selected">{{ settings.drtborderpx }}</option>
+                  					{% endif %} 
+				  					<option value="default">default</option>
+                  					<option value="1px">1px</option>
+                  					<option value="2px">2px</option>
+                  					<option value="3px">3px</option>
+                  					<option value="4px">4px</option>
+                  					<option value="5px">5px</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[drtbordero]" class="form-control">
+			      					{% if settings.drtbordero %} 
+                  						<option value="{{ settings.drtbordero }}" selected="selected">{{ settings.drtbordero }}</option>
+                  					{% endif %} 
+                  					<option value="all-around">all-around</option>
+                  					<option value="top">top</option>
+                  					<option value="left">left</option>
+                  					<option value="right">right</option>
+                  					<option value="bottom">bottom</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+         						<select name="supermenu_settings[drtborders]" class="form-control">
+			      					{% if settings.drtborders %} 
+                  						<option value="{{ settings.drtborders }}" selected="selected">{{ settings.drtborders }}</option>
+                  					{% endif %} 
+                  					<option value="solid">solid</option>
+                  					<option value="dotted">dotted</option>
+                  					<option value="dashed">dashed</option>
+								</select>	
+		 						</div>
+		 						<div class="col-sm-3">	
+		 						<input type="text" name="supermenu_settings[drtborderc]" class="sm-colors form-control" value="{{ settings.drtborderc }}" size="7" />
+		 						</div>
+		 						</div>
+	    					</div>
+	    					<div class="settings-row">
+	     						Dropdown - price color:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[pricec]" class="sm-colors form-control" value="{{ settings.pricec }}" /></div>
+		 							<div class="col-sm-2">>> old price >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[pricech]" class="sm-colors form-control" value="{{ settings.pricech }}" /></div>
+		 						</div>
+							</div>
+	    					<div class="settings-row">
+	     						Dropdown - view all link color(if displayed):
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[valc]" class="sm-colors form-control" value="{{ settings.valc }}" /></div>
+		 							<div class="col-sm-2">>> hover >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[valch]" class="sm-colors form-control" value="{{ settings.valch }}" /></div>
+		 						</div>
+							</div>
+							<div class="settings-row">
+		 						Dropdown - view all link background gradient:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[valb]" class="sm-colors form-control" value="{{ settings.valb }}" /></div>
+		 							<div class="col-sm-2">>> to >></div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[valb2]" class="sm-colors form-control" value="{{ settings.valb2 }}" /></div>
+		 						</div>
+	    					</div>
+							<div class="settings-row">
+	     						Dropdown - view all link border:
+		 						<div class="row">
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[valborderpx]" class="form-control">
+			      					{% if settings.valborderpx %} 
+                  						<option value="{{ settings.valborderpx }}" selected="selected">{{ settings.valborderpx }}</option>
+                  					{% endif %} 
+				  					<option value="default">default</option>
+                  					<option value="1px">1px</option>
+                  					<option value="2px">2px</option>
+                  					<option value="3px">3px</option>
+                  					<option value="4px">4px</option>
+                  					<option value="5px">5px</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+		 						<select name="supermenu_settings[valbordero]" class="form-control">
+			      					{% if settings.valbordero %} 
+                  						<option value="{{ settings.valbordero }}" selected="selected">{{ settings.valbordero }}</option>
+                  					{% endif %} 
+                  					<option value="all-around">all-around</option>
+                  					<option value="top">top</option>
+                  					<option value="left">left</option>
+                  					<option value="right">right</option>
+                  					<option value="bottom">bottom</option>
+		 						</select>	
+		 						</div>
+		 						<div class="col-sm-3">
+         						<select name="supermenu_settings[valborders]" class="form-control">
+			      					{% if settings.valborders %} 
+                  						<option value="{{ settings.valborders }}" selected="selected">{{ settings.valborders }}</option>
+                  					{% endif %} 
+                  					<option value="solid">solid</option>
+                  					<option value="dotted">dotted</option>
+                  					<option value="dashed">dashed</option>
+								</select>	
+		 						</div>
+		 						<div class="col-sm-3">	
+		 						<input type="text" name="supermenu_settings[valborderc]" class="sm-colors form-control" value="{{ settings.valborderc }}" size="7" />
+		 						</div>
+		 						</div>
+	    					</div>
+							<div class="settings-row">
+		 						Expand button (mobile) - background:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[expbm]" class="sm-colors form-control" placeholder="background" value="{{ settings.expbm }}" /></div>
+		 							<div class="col-sm-2">and color</div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[expbmc]" class="sm-colors form-control" placeholder="color" value="{{ settings.expbmc }}" /></div>
+		 						</div>
+		 						or if expanded
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[expbme]" class="sm-colors form-control" placeholder="background" value="{{ settings.expbme }}" /></div>
+		 							<div class="col-sm-2">and color</div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[expbmec]" class="sm-colors form-control" placeholder="color" value="{{ settings.expbmec }}" /></div>
+		 						</div>
+	    					</div>
+							<div class="settings-row">
+		 						Mobile menu button text color:
+	     						<div class="row">
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[mmbtc]" class="sm-colors form-control" value="{{ settings.mmbtc }}" /></div>
+		 							<div class="col-sm-2">and bars icon color</div>
+		 							<div class="col-sm-5"><input type="text" name="supermenu_settings[mmbtcb]" class="sm-colors form-control" value="{{ settings.mmbtcb }}" /></div>
+		 						</div>
+	    					</div>
+							<div class="settings-row">
+		 						Custom Css:
+	     						<div class="row">
+		 							<div class="col-sm-12"><textarea name="supermenu_settings[custom_css]" class="form-control">{{ settings.custom_css }}</textarea></div>
+		 						</div>
+	    					</div>
+						</div>
+					</div>
+		  		</div>
+				<div class="tab-pane" id="tab-html">
+					<ul class="nav nav-tabs" id="language">
+						{% for language in languages %} 
+							<li><a href="#language{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+						{% endfor %} 
+					</ul>
+
+		 			<div class="tab-content">
+		 				{% for language in languages %} 
+          					<div class="tab-pane" id="language{{ language.language_id }}">
+				 				<div class="form-group">
+                    				<label class="col-sm-2 control-label" for="area1{{ language.language_id }}">Area 1</label>
+                    				<div class="col-sm-10">
+                      					<textarea data-toggle="summernote" name="supermenu_htmlarea1[{{ language.language_id }}]" id="area1{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea1[language.language_id] }}</textarea>
+                    				</div>
+                 				</div>
+				 				<div class="form-group">
+                 				   <label class="col-sm-2 control-label" for="area2{{ language.language_id }}">Area 2</label>
+                 				   <div class="col-sm-10">
+                 				     <textarea data-toggle="summernote" name="supermenu_htmlarea2[{{ language.language_id }}]" id="area2{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea2[language.language_id] }}</textarea>
+                 				   </div>
+                 				</div>
+				 				<div class="form-group">
+                 				   <label class="col-sm-2 control-label" for="area3{{ language.language_id }}">Area 3</label>
+                 				   <div class="col-sm-10">
+                 				     <textarea data-toggle="summernote" name="supermenu_htmlarea3[{{ language.language_id }}]" id="area3{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea3[language.language_id] }}</textarea>
+                 				   </div>
+                 				</div>
+				 				<div class="form-group">
+                 				   <label class="col-sm-2 control-label" for="area4{{ language.language_id }}">Area 4</label>
+                 				   <div class="col-sm-10">
+                 				     <textarea data-toggle="summernote" name="supermenu_htmlarea4[{{ language.language_id }}]" id="area4{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea4[language.language_id] }}</textarea>
+                 				   </div>
+                 				</div>
+				 				<div class="form-group">
+                 				   <label class="col-sm-2 control-label" for="area5{{ language.language_id }}">Area 5</label>
+                 				   <div class="col-sm-10">
+                 				     <textarea data-toggle="summernote" name="supermenu_htmlarea5[{{ language.language_id }}]" id="area5{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea5[language.language_id] }}</textarea>
+                 				   </div>
+                 				</div>
+				 				<div class="form-group">
+                 				   <label class="col-sm-2 control-label" for="area6{{ language.language_id }}">Area 6</label>
+                 				   <div class="col-sm-10">
+                 				     <textarea data-toggle="summernote" name="supermenu_htmlarea6[{{ language.language_id }}]" id="area6{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea6[language.language_id] }}</textarea>
+                 				   </div>
+                 				</div>
+				 				<div class="form-group">
+                 				   <label class="col-sm-2 control-label" for="area7{{ language.language_id }}">Area 7</label>
+                 				   <div class="col-sm-10">
+                 				     <textarea data-toggle="summernote" name="supermenu_htmlarea7[{{ language.language_id }}]" id="area7{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea7[language.language_id] }}</textarea>
+                 				   </div>
+                 				</div>
+				 				<div class="form-group">
+                 				   <label class="col-sm-2 control-label" for="area8{{ language.language_id }}">Area 8</label>
+                 				   <div class="col-sm-10">
+                 				     <textarea data-toggle="summernote" name="supermenu_htmlarea8[{{ language.language_id }}]" id="area8{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea8[language.language_id] }}</textarea>
+                 				   </div>
+                 				</div>
+				 				<div class="form-group">
+                 				   <label class="col-sm-2 control-label" for="area9{{ language.language_id }}">Area 9</label>
+                 				   <div class="col-sm-10">
+                 				     <textarea data-toggle="summernote" name="supermenu_htmlarea9[{{ language.language_id }}]" id="area9{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea9[language.language_id] }}</textarea>
+                 				   </div>
+                 				</div>
+				 				<div class="form-group">
+                 				   <label class="col-sm-2 control-label" for="area10{{ language.language_id }}">Area 10</label>
+                 				   <div class="col-sm-10">
+                 				     <textarea data-toggle="summernote" name="supermenu_htmlarea10[{{ language.language_id }}]" id="area10{{ language.language_id }}" class="form-control">{{ supermenu_htmlarea10[language.language_id] }}</textarea>
+                 				   </div>
+                 				</div>
+		  					</div>
+		 				{% endfor %}  
+		 			</div>
+				</div>
+			</div>
+      	</form>
+    </div>
+  </div>
+</div>
+<link href="view/javascript/codemirror/lib/codemirror.css" rel="stylesheet" />
+<link href="view/javascript/codemirror/theme/monokai.css" rel="stylesheet" />
+<script type="text/javascript" src="view/javascript/codemirror/lib/codemirror.js"></script> 
+<script type="text/javascript" src="view/javascript/codemirror/lib/xml.js"></script> 
+<script type="text/javascript" src="view/javascript/codemirror/lib/formatting.js"></script> 
+<script type="text/javascript" src="view/javascript/summernote/summernote.js"></script>
+<link href="view/javascript/summernote/summernote.css" rel="stylesheet" />
+<script type="text/javascript" src="view/javascript/summernote/summernote-image-attributes.js"></script> 
+<script type="text/javascript" src="view/javascript/summernote/opencart.js"></script> 
+<script type="text/javascript" src="view/javascript/supermenu/jquery.minicolors.min.js"></script>
+<link rel="stylesheet" type="text/css" href="view/javascript/supermenu/jquery.minicolors.css" />
+<script type="text/javascript">
+	function startColMan() {
+        $(".sm-colors").minicolors({
+          control: 'hue',
+          theme: 'bootstrap',
+          change: function(hex, rgb) {
+            $("#console").prepend('HEX: ' + hex + ' (RGB: ' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')<br />');
+          }
+        });
+	}
+	$(document).ready(startColMan);
+</script>
+<script type="text/javascript">
+//featured products
+$('input[name=\'product\']').autocomplete({
+	source: function(request, response) {
+		$.ajax({
+			url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['product_id']
+					}
+				}));
+			}
+		});
+	},
+	select: function(item) {
+		$('input[name=\'product\']').val('');
+		
+		$('#featured-product' + item['value']).remove();
+		
+		$('#featured-product').append('<div id="featured-product' + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="supermenu_fproduct[]" value="' + item['value'] + '" /></div>');	
+	}
+});
+	
+$('#featured-product').delegate('.fa-minus-circle', 'click', function() {
+	$(this).parent().remove();
+});
+//category autocomplete
+function categoryAutocomplete(id, name) {
+$('input[name=\''+id+'\']').autocomplete({
+	source: function(request, response) {
+		$.ajax({
+			url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['category_id']
+					}
+				}));
+			}
+		});
+	},
+	select: function(item) {
+		$('input[name=\''+id+'\']').val('');
+		
+		$('#featured-'+id + item['value']).remove();
+		
+		$('#featured-'+id).append('<div id="featured-' + id + item['value'] + '"><i class="fa fa-minus-circle"></i> ' + item['label'] + '<input type="hidden" name="'+name+'[]" value="' + item['value'] + '" /></div>');	
+	}
+});
+	
+$('#featured-'+id).delegate('.fa-minus-circle', 'click', function() {
+	$(this).parent().remove();
+});
+}
+//more categories
+categoryAutocomplete('featcat', 'supermenu_more');
+//featured categories
+categoryAutocomplete('feat2cat', 'supermenu_more2');
+
+//single category autocomplete
+function singleCatAutocomplete(obj) {
+obj.autocomplete({
+	'source': function(request, response) {
+		$.ajax({
+			url: 'index.php?route=catalog/category/autocomplete&user_token={{ user_token }}&filter_name=' +  encodeURIComponent(request),
+			dataType: 'json',
+			success: function(json) {
+				json.unshift({
+					category_id: 0,
+					name: '{{ text_none }}'
+				});
+
+				response($.map(json, function(item) {
+					return {
+						label: item['name'],
+						value: item['category_id']
+					}
+				}));
+			}
+		});
+	},
+	'select': function(item) {
+		obj.val(item['label']);
+		obj.prev().val(item['value']);
+	}
+});
+}
+
+$('.category-autocomplete').each(function() {
+	singleCatAutocomplete($(this));
+});
+
+$(document).on('click', '.selectbuts button',  function() {
+   $(this).parent().parent().find('input').val($(this).data('value')).trigger('change');
+   $(this).parent().find('button').attr("class", "btn btn-default");
+   $(this).addClass('btn-info');
+});
+
+//row item add
+var item_row = {{ item_row }};
+
+function additem() {	
+	html  = '<tbody class="item-row" id="item-row' + item_row + '">';
+	html += '  <tr>';
+	html += '    <td class="text-left"><select class="item-type" style="border: 4px solid #333;" id="item-type' + item_row + '" name="supermenu_item[' + item_row + '][type]">';
+	html += '      <option class="ocat" id="ocat' + item_row + '" value="cat">{{ type_cat }}</option>';
+	html += '      <option class="oinfol" id="oinfol' + item_row + '" value="infol">{{ type_infol }}</option>';
+	html += '      <option class="infod" value="infod">{{ type_infod }}</option>';
+	html += '      <option class="ocustom" id="ocustom' + item_row + '" value="custom">{{ type_custom }}</option>';
+	html += '      <option class="mand" id="mand' + item_row + '" value="mand">{{ type_mand }}</option>';
+	html += '      <option class="more" id="more' + item_row + '" value="more">{{ type_more }}</option>';
+	html += '      <option class="moredoi" id="moredoi' + item_row + '" value="more2">{{ type_more2 }}</option>';
+	html += '      <option class="oproducts" id="oproducts' + item_row + '" value="products">{{ type_products }}</option>';
+	html += '      <option class="catprods" id="catprods' + item_row + '" value="catprods">{{ type_catprods }}</option>';
+	html += '      <option class="catprods" id="catcatprods' + item_row + '" value="catcatprods">{{ type_catcatprods }}</option>';
+	html += '      <option class="login" id="login' + item_row + '" value="login">{{ type_login }}</option>';
+	html += '    </select><div class="viewsel viewsel' + item_row + '"><b>{{ text_sview }} </b><select class="form-control" name="supermenu_item[' + item_row + '][view]"><option value="0" selected="selected">{{ text_slist }}</option><option value="1">{{ text_sgrid }}</option><option value="f0">{{ text_dflist }}</option><option value="f1">{{ text_dfgrid }}</option></select></div></td>';
+	
+	html += '    <td class="text-left"><div style="position: relative;"><div class="sorder">{{ text_sorder }}<input size="2" type="text" name="supermenu_item[' + item_row + '][sorder]" value="" /></div><div id="cat-type' + item_row + '" class="typediv cat-type"><h3 class="superh3">{{ entry_category }}</h3><input type="hidden" name="supermenu_item[' + item_row + '][category_id]" value="0" /><input type="text" value="" placeholder="{{ entry_category }} - autocomplete" class="form-control category-autocomplete" id="autocompcat'+item_row+'" /></div>';
+	html += '     <div id="info-type' + item_row + '" class="typediv info-type"><h3 class="superh3">{{ entry_information }}</h3><select class="form-control" name="supermenu_item[' + item_row + '][information_id]">';
+	{% for information in informations %} 
+	html += '      <option value="{{ information.information_id }}">{{ information.name|replace({"'" : ""}) }}</option>';
+	{% endfor %}        
+	html += '    </select></div>';
+	html += '    <div id="oproducts-type' + item_row + '" class="typediv oproducts-type"> <h3 class="superh3">{{ text_whatproducts }}</h3><div class="btn-group selectbuts"><button type="button" class="btn btn-info" data-toggle="tooltip" data-value="latest" title="">{{ text_productlatest }}</button><button type="button" class="btn btn-default" data-toggle="tooltip" data-value="special" title="">{{ text_productspecial }}</button><button type="button" class="btn btn-default" data-toggle="tooltip" data-value="featured" title="">{{ text_productfeatured }}</button><button type="button" class="btn btn-default" data-toggle="tooltip" data-value="bestseller" title="">{{ text_productbestseller }}</button></div><input type="hidden" name="supermenu_item[' + item_row + '][products]" value="" /></div>';
+	html += '    <div id="productlimit-type' + item_row + '" class="typediv productlimit-type"><br /><div class="input-group long"><span class="input-group-addon long">{{ text_productlimit }}</span><input size="1" type="text" name="supermenu_item[' + item_row + '][productlimit]" value="5" class="form-control" /></div></div>';
+	html += '    <div id="custom-type' + item_row + '" class="typediv custom-type"> <h3 class="superh3">{{ entry_custom }}</h3>';
+    {% for language in languages %} 
+	html += '     <div class="input-group long"><span class="input-group-addon long"><img class="inline-img" src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ custom_name }}</span><input type="text" name="supermenu_item[' + item_row + '][customname][{{ language.language_id }}]" value="" class="form-control" /></div><br /><div class="input-group long"><span class="input-group-addon long"><img class="inline-img" src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ custom_url }}</span><input class="form-control" type="text" name="supermenu_item[' + item_row + '][customurl][{{ language.language_id }}]" value="" /></div>';
+	{% endfor %} 
+	html += '    </div> <h3 class="addsuperh3" id="hideadd-type' + item_row + '">{{ entry_add }}</h3><div id="add-type' + item_row + '" class="addtypediv">';
+	{% for language in languages %} 
+	html +=	'		<div class="addTypeInner"><div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span>';
+	html += '     		<input type="text" name="supermenu_item[' + item_row + '][addurl][{{ language.language_id }}]" value="" class="form-control" placeholder="Banner Link Url" /></div>';
+	html +=	'		<div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span><a href="" id="thumb-image_' + item_row + '{{ language.language_id }}" data-toggle="image" class="img-thumbnail"><img style="max-width: 200px" src="{{ no_image }}" alt="" title="" data-placeholder="{{ no_image }}" /></a><input type="hidden" name="supermenu_item[' + item_row + '][image][{{ language.language_id }}]" value="" id="input-image_' + item_row + '{{ language.language_id }}" /></div></div>';
+	{% endfor %} 
+	html += '		</div></div></td> ';
+	html += '    <td class="text-left"><style type="text/css"> .advm' + item_row + ' .advh { display: none; } </style><div class="advm' + item_row + ' advs"><a class="expand btn btn-info"><i class="fa fa-arrows-alt" aria-hidden="true"></i> {{ text_expando }}</a><div class="advh"><a class="closeadvm"><strong><span style="font-size:20px;"><span style="font-family:lucida sans unicode,lucida grande,sans-serif;">x</span></span></strong></a><table class="smenua"><tr><td>{{ text_tlcolor }}</td><td><input type="text" class="sm-colors form-control" name="supermenu_item[' + item_row + '][tlcolor]" value="" size="7" /></td><td>{{ text_tlstyle }}</td><td><input type="text" name="supermenu_item[' + item_row + '][tlstyle]" value="" size="28" class="form-control" /></td></tr><tr><td>{{ text_chtml }}</td><td><select class="form-control" name="supermenu_item[' + item_row + '][chtml]"><option value="0">{{ text_no }}</option><option value="1">{{ text_alldrop }}</option><option value="3">{{ text_overdrop }}</option><option value="2">{{ text_justadd }}</option></select><select class="form-control" name="supermenu_item[' + item_row + '][cchtml]"><option value="area1">Area 1</option><option value="area2">Area 2</option><option value="area3">Area 3</option><option value="area4">Area 4</option><option value="area5">Area 5</option><option value="area6">Area 6</option><option value="area7">Area 7</option><option value="area8">Area 8</option><option value="area9">Area 9</option><option value="area10">Area 10</option></select></td><td>{{ text_subcatdisplay }}</td><td><select class="form-control" name="supermenu_item[' + item_row + '][subcatdisplay]"><option value="all">{{ text_subcatdisplay_all }}</option><option value="level1">{{ text_subcatdisplay_level1 }}</option><option value="none">{{ text_subcatdisplay_none }}</option></select></td></tr><tr><td>{{ text_dwidth }}</td><td><input class="form-control" type="text" name="supermenu_item[' + item_row + '][dwidth]" value="" size="3" /></td><td>{{ text_iwidth }}</td><td><input class="form-control" type="text" name="supermenu_item[' + item_row + '][iwidth]" value="" size="3" /></td></tr><tr><td>{{ text_fbrands }}</td><td colspan="3"><input class="form-control" type="text" name="supermenu_item[' + item_row + '][fbrands]" value="" size="48" /></td></tr><tr><td>{{ text_linknewtab }} <input type="checkbox" name="supermenu_item[{{ item_row }}][tntab]" value="1" /></td><td colspan="2">{{ text_mini_flyout }} <input type="checkbox" name="supermenu_item[{{ item_row }}][mfly]" value="1" /></td><td>{{ text_flyout_left }} <input type="checkbox" name="supermenu_item[{{ item_row }}][mflyl]" value="1" /></td></tr></table></div></div>';
+    html += '</td>';
+	html += '    <td class="text-left"><button type="button" onclick="$(\'#item-row' + item_row + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+	html += '  </tr>';
+	html += '</tbody>';
+	$('#item tfoot').before(html);
+	$("#item-row" + item_row + " .item-type").change();
+	singleCatAutocomplete($('#autocompcat'+item_row));
+	item_row++;
+	startColMan();
+}
+
+//activate first lang tab
+$('#language a:first').tab('show');
+
+//trigger change on item type
+$( document ).ready(function() {
+	$(".item-row .item-type").change();
+});
+
+$(document).on('change','.item-row .item-type',function(){
+  var parent = $(this).parent().parent();
+  parent.find('.typediv').hide();
+  if ($(this).find('.ocat').is(":selected")) {
+     parent.find('.cat-type').fadeIn('fast');
+     parent.find('.viewsel').fadeIn('fast');
+  } else if ($(this).find('.oinfol').is(":selected")) {
+     parent.find('.info-type').fadeIn('fast');
+  } else if ($(this).find('.ocustom').is(":selected")) {
+     parent.find('.custom-type').fadeIn('fast');
+  } else if ($(this).find('.mand').is(":selected") || $(this).find('.more').is(":selected") || $(this).find('.moredoi').is(":selected")) {
+     parent.find('.viewsel').fadeIn('fast');
+  } else if ($(this).find('.oproducts').is(":selected")) {
+     parent.find('.oproducts-type').fadeIn('fast');
+     parent.find('.viewsel').fadeIn('fast');
+     parent.find('.productlimit-type').fadeIn('fast');
+  } else if ($(this).find('.catprods').is(":selected") || $(this).find('.catcatprods').is(":selected")) {
+     parent.find('.cat-type').fadeIn('fast');
+     parent.find('.viewsel').fadeIn('fast');
+     parent.find('.productlimit-type').fadeIn('fast');
+  }
+});
+
+//dropdown banner show
+$(document).on('click', '.addsuperh3', function() {
+	$(this).next(".addtypediv").slideToggle('fast');
+	$(this).toggleClass('active');
+});
+
+//advanced settings show
+$(document).on('click', '.advs .expand', function() {
+	$(this).parent().find('.advh').slideToggle('fast');
+});
+$(document).on('click', '.advs .advh .closeadvm', function() {
+	$(this).parent().slideUp('fast');
+});
+
+</script>
+
+<style type="text/css">
+  table.list td {
+    vertical-align: top;
+	border-bottom: 5px solid #ddd;
+	}
+	select { 
+    border: 2px solid #DDDDDD;
+    padding: 5px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+    }
+	h3.superh3 {margin-top: 5px; margin-bottom: 5px; border-bottom: 1px solid #ddd; padding-bottom: 3px; color: #FF7200;}
+	h3.addsuperh3 {margin-top: 5px; margin-bottom: 5px; border-bottom: 1px solid #ddd; padding-bottom: 3px; color: #FF7200; cursor: pointer; margin-right: 70px;}
+	.typediv, .addtypediv { margin-right: 70px; }
+    a.button, .list a.button {
+    background: #4094D8;
+	color: #fff;
+	padding: 6px;
+	font-weight: bold;
+	border: 1px solid #4FB0FA;
+	border-right: 1px solid #3E83B7;
+	border-bottom: 1px solid #3E83B7;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+	}
+	a.button:hover, .list a.button:hover {
+	background: #333;
+	border: 1px solid #444;
+	border-right: 1px solid #222;
+	border-bottom: 1px solid #222;
+	}
+	.htabs {
+	border-bottom: 3px solid #ddd;
+	}
+	.viewsel {
+	padding: 5px; 
+	background: #ddd;
+	border-radius: 3px;
+	width: 200px;
+	margin-top: 8px;
+	}
+	.htabs a {
+    border-top: 3px solid #ddd;
+	border-left: 3px solid #ddd;
+	border-right: 3px solid #ddd;
+	background: #88C847;
+	-webkit-border-radius: 3px 3px 0px 0px;
+	-moz-border-radius: 3px 3px 0px 0px;
+	-khtml-border-radius: 3px 3px 0px 0px;
+	border-radius: 3px 3px 0px 0px;
+	padding: 6px 15px 5px;
+	color: #fff;
+    }	
+	.htabs a.selected { 
+     background: #FFFFFF;
+	 color: #88C847;
+     padding-bottom: 8px;
+     }
+	 a.butonas, .list a.butonas {
+    background: #4094D8;
+	color: #fff;
+	padding: 4px;
+	margin-bottom: 2px;
+	display: inline-block;
+	line-height: 16px;
+	padding-left: 5px;
+	padding-right: 5px;
+	font-weight: bold;
+	border: 1px solid #4FB0FA;
+	border-right: 1px solid #3E83B7;
+	border-bottom: 1px solid #3E83B7;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+	text-decoration: none;
+	}
+	 a.butonas:hover, .list a.butonas:hover {
+	 background: #3A81B7;
+	}
+	 a.butonasc, .list a.butonasc {
+    background: #FF2323;
+	color: #fff;
+	padding: 4px;
+	line-height: 16px;
+	padding-left: 7px;
+	padding-right: 7px;
+	display: inline-block;
+	font-weight: bold;
+	border: 1px solid #FB6262;
+	border-right: 1px solid #C11818;
+	border-bottom: 1px solid #C11818;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+	margin-bottom: 4px;
+	text-decoration: none;
+	}
+	 a.butonasc:hover, .list a.butonasc:hover {
+	 background: #EB1D1D;
+	}
+	table.sets td {
+	 padding-top: 5px;
+	 padding-bottom: 5px;
+	 border-bottom: 2px solid #ddd;
+	}
+	.box > .content {
+	overflow: visible;
+	}
+	.advs {
+	  overflow: visible;
+	  width: 100%;
+	  height: 58px;
+	  position: relative;
+	  text-align: center;
+	  padding-top: 10px;
+	}
+	.advs a.closeadvm {
+	  float: right;
+	  margin-top: -20px;
+	}
+	.advs .advh {
+	  position: absolute;
+	  z-index: 99;
+	  display: block;
+	  width: 700px;
+	  background: #fff;
+	  border: 3px solid #eee;
+	  padding: 20px;
+	  text-align: left;
+	  right: 0px;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-khtml-border-radius: 7px;
+	border-radius: 7px;
+	-webkit-box-shadow: 0px 0px 30px #999;
+	-moz-box-shadow: 0px 0px 30px #999;
+	box-shadow: 0px 0px 30px #999;
+	}
+	table.smenua {
+	  width: 100%;
+	  background: none;
+	  border-top: 1px solid #ddd;
+	  border-left: 1px solid #ddd;
+	}
+	table.smenua td {
+	  background: #fff !important;
+	  padding: 2px;
+	  }
+	  .addtypediv { display: none; }
+    .sorder {
+	    position: absolute;
+		right: 0px;
+		top: 0px;
+		width: 50px;
+		color: #fff;
+		background: #6d6d6d;
+		padding: 5px;
+		box-radius: 5px;
+		box-shadow: 0px 0px 2px #333;
+		text-align: center;
+		font-weight: bold;
+	  }
+	  .sorder input { font-size: 15px; color: #333; font-weight: bold; text-align: center; width: 30px; }
+	  select.item-type { width: 200px; }
+	  .settings-row { 
+	    display: block;
+        padding: 5px;
+        border-bottom: 1px solid #ddd;
+	  }
+	  .image { display: block; }
+	  .advs .advh { display: none; }
+	  .advs a.expand, .advs a.closeadvm { cursor: pointer; }
+	  table.smenua { border: none; border-collapse: collapse; }
+	  table.smenua td { border: 1px solid #ddd; padding: 4px; }
+	  .sorder input { padding: 0px !important; }
+	  a { cursor: pointer; }
+	  .settings-row {
+		padding: 7px;
+		border-bottom: 1px solid #eee;
+		border-top: 1px solid #eee;
+		margin-bottom: 3px;
+	  }
+	  * { white-space: normal !important; }
+	  #item { display: table !important; }
+	  .addTypeInner { padding: 3px; background: #eee; border: 1px solid #ddd; margin-bottom: 2px; text-align: left; font-weight: bold; }
+	  span.help {
+	  	font-size: 11px;
+	  	color: #888;
+	  }
+	  span.help.inred {
+	  	color: #f00;
+	  }
+	  .settings-row .lefter { display: inline-block; width: 150px; vertical-align: top; }
+	  .form-control.small { width: 100px; display: inline-block; }
+	  .form-control.medium { width: 250px; display: inline-block; }
+	  .h2settings { margin-top: 15px; margin-bottom: 15px; }
+	  .addTypeInner a.img-thumbnail {
+	  	width: 100%;
+	  	text-align: center;
+	  }
+	  .input-group-addon.long { width: 30%; }
+	  .inline-img { display: inline-block !important; }
+	  .input-group.long { width: 100%; }
+	  .table thead > tr > td, .table tbody > tr > td {
+    	vertical-align: top;
+	  }
+</style>
+{{ footer }}
